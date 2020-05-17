@@ -70,6 +70,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> 
 {
    bool isSignedIn = false;
+   PageController pageController; 
+   int getPageIndex = 0;  
 
   //  GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -93,6 +95,8 @@ class _HomePageState extends State<HomePage>
   //  }
   void initState(){
     super.initState();
+
+    pageController = PageController();
 
     gSignIn.onCurrentUserChanged.listen((gSigninAccount){
       controlSignIn(gSigninAccount);
@@ -120,12 +124,28 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+  void dispose(){
+    pageController.dispose();
+    super.dispose();
+  }
+
   loginUser(){
     gSignIn.signIn();
   }
 
   logoutUser(){
     gSignIn.signOut();
+  }
+
+  whenPageChanges(int pageIndex){
+    setState(() {
+      this.getPageIndex = pageIndex;
+    });
+  }
+
+  onTabChangePage(int pageIndex){
+    pageController.animateToPage(pageIndex, duration: Duration(milliseconds: 400), curve: Curves.bounceInOut);
+
   }
 
 
@@ -139,6 +159,23 @@ class _HomePageState extends State<HomePage>
             UploadPage(),
             NotificationsPage(),
             ProfilePage(),
+          ],
+          controller: pageController,
+          onPageChanged: whenPageChanges,
+          physics: NeverScrollableScrollPhysics(),
+        ),
+        bottomNavigationBar: CupertinoTabBar(
+          currentIndex: getPageIndex,
+          onTap: onTabChangePage,
+          backgroundColor: Colors.cyan,
+          activeColor: Colors.white,
+          inactiveColor: Colors.red,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home)),
+            BottomNavigationBarItem(icon: Icon(Icons.search)),
+            BottomNavigationBarItem(icon: Icon(Icons.photo_camera, size: 37.0,)),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite)),
+            BottomNavigationBarItem(icon: Icon(Icons.person)),
           ],
         ),
       );
