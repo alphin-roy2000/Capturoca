@@ -75,7 +75,7 @@ class HomePage extends StatefulWidget {
 // }
 class _HomePageState extends State<HomePage> 
 {
-   bool isSignedIn = false;
+   bool isSignedIn;
    PageController pageController; 
    int getPageIndex = 0;  
 
@@ -110,10 +110,12 @@ class _HomePageState extends State<HomePage>
       print("Error Message: " + gError);
     });
 
-    // gSignIn.signIn().then((gSignInAccount){
+    //  gSignIn.signInSilently(suppressErrors: false).then((gSignInAccount){
     //   controlSignIn(gSignInAccount);
+    // }).catchError((gError){
+    //   print("Error Message: " + gError);
     // });
-  }
+    }
 
   controlSignIn(GoogleSignInAccount signInAccount) async{
     if(signInAccount !=null)
@@ -160,12 +162,15 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  loginUser(){
+  loginUser() async {
+    await
     gSignIn.signIn();
+    
   }
 
   logoutUser(){
     gSignIn.signOut();
+
   }
 
   whenPageChanges(int pageIndex){
