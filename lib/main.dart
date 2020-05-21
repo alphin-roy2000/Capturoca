@@ -1,6 +1,6 @@
 
 import 'package:Capturoca/pages/HomePage.dart';
-import 'package:Capturoca/pages/ProfilePage.dart';
+
 
 import 'package:flutter/material.dart';
 
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         dialogBackgroundColor: Colors.white,
         primarySwatch: Colors.blue,
-        accentColor: Colors.redAccent,
+        accentColor: Colors.indigo,
         cardColor: Colors.white70,
         
       ),

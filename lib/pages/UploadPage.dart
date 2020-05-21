@@ -166,7 +166,8 @@ class _UploadPageState extends State<UploadPage>with AutomaticKeepAliveClientMix
       "likes":{},
       "username":widget.gCurrentUser.username,
       "description": description,
-      "location":url,
+      "location":location,
+      "url": url,
     });
   }
   
@@ -260,6 +261,6 @@ class _UploadPageState extends State<UploadPage>with AutomaticKeepAliveClientMix
    bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
-    return file== null ? displayUploadScreen() : displayUploadFormScreen();
+    return file == null ? displayUploadScreen() : displayUploadFormScreen();
   }
 }
