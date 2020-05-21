@@ -188,13 +188,13 @@ class _HomePageState extends State<HomePage>
       return Scaffold(
         body: PageView(
           children: <Widget>[
-            //TimeLinePage(),
-            RaisedButton.icon(onPressed: logoutUser, icon: Icon(Icons.close), label: Text("Sign Out")),
+            TimeLinePage(),
+            // RaisedButton.icon(onPressed: logoutUser, icon: Icon(Icons.close), label: Text("Sign Out")),
             SearchPage(),
             // RaisedButton.icon(onPressed: logoutUser, icon: Icon(Icons.close), label: Text("Sign Out")),
             UploadPage(currentUser),
             NotificationsPage(),
-            ProfilePage(),
+            ProfilePage(userProfileId: currentUser.id),
           ],
           controller: pageController,
           onPageChanged: whenPageChanges,
