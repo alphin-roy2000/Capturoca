@@ -1,4 +1,4 @@
-import 'dart:ui';
+
 import 'package:Capturoca/models/user.dart';
 import 'package:Capturoca/pages/CreateAccountPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,12 +7,15 @@ import 'package:Capturoca/pages/ProfilePage.dart';
 import 'package:Capturoca/pages/SearchPage.dart';
 import 'package:Capturoca/pages/TimeLinePage.dart';
 import 'package:Capturoca/pages/UploadPage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final GoogleSignIn gSignIn = GoogleSignIn();
 final usersReference = Firestore.instance.collection("users");
+final StorageReference storageReference= FirebaseStorage.instance.ref().child("Post Pictures");
+final postsReference = Firestore.instance.collection("posts");
 
 final DateTime timestamp = DateTime.now();
 User currentUser;
@@ -75,7 +78,7 @@ class HomePage extends StatefulWidget {
 // }
 class _HomePageState extends State<HomePage> 
 {
-   bool isSignedIn;
+   bool isSignedIn = false;
    PageController pageController; 
    int getPageIndex = 0;  
 
@@ -110,12 +113,10 @@ class _HomePageState extends State<HomePage>
       print("Error Message: " + gError);
     });
 
-    //  gSignIn.signInSilently(suppressErrors: false).then((gSignInAccount){
+    // gSignIn.signIn().then((gSignInAccount){
     //   controlSignIn(gSignInAccount);
-    // }).catchError((gError){
-    //   print("Error Message: " + gError);
     // });
-    }
+  }
 
   controlSignIn(GoogleSignInAccount signInAccount) async{
     if(signInAccount !=null)
@@ -162,15 +163,12 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  loginUser() async {
-    await
+  loginUser(){
     gSignIn.signIn();
-    
   }
 
   logoutUser(){
     gSignIn.signOut();
-
   }
 
   whenPageChanges(int pageIndex){
@@ -193,7 +191,8 @@ class _HomePageState extends State<HomePage>
             //TimeLinePage(),
             RaisedButton.icon(onPressed: logoutUser, icon: Icon(Icons.close), label: Text("Sign Out")),
             SearchPage(),
-            UploadPage(),
+            // RaisedButton.icon(onPressed: logoutUser, icon: Icon(Icons.close), label: Text("Sign Out")),
+            UploadPage(currentUser),
             NotificationsPage(),
             ProfilePage(),
           ],
@@ -269,6 +268,3 @@ class _HomePageState extends State<HomePage>
     }
   }
 }
-
-
-

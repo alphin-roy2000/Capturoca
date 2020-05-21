@@ -1,5 +1,7 @@
 
 import 'package:Capturoca/pages/HomePage.dart';
+import 'package:Capturoca/pages/ProfilePage.dart';
+
 import 'package:flutter/material.dart';
 
 void main()
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         cardColor: Colors.white70,
         
       ),
-      home: HomePage(),
+      home:HomePage(),
     );
   }
 }
