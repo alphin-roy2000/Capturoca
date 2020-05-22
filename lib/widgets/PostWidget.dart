@@ -1,9 +1,14 @@
+import 'dart:async';
+
+
 import 'package:Capturoca/models/user.dart';
 import 'package:Capturoca/widgets/ProgressWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Capturoca/pages/HomePage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+
 
 class Post extends StatefulWidget {
 
@@ -27,7 +32,7 @@ class Post extends StatefulWidget {
       description: documentSnapshot["description"],
       location: documentSnapshot["location"],
       url: documentSnapshot["url"],
-    );
+    ); 
 
   }
   int getTotalNumberOfLikes(likes){
@@ -42,6 +47,7 @@ class Post extends StatefulWidget {
     });
     return counter;
   }
+  
   @override
   _PostState createState() => _PostState(
     postId: this.postId,
@@ -50,7 +56,8 @@ class Post extends StatefulWidget {
     username:this.username,
     description:this.description,
     location:this.location,
-    url:this.url
+    url:this.url,
+    likeCount: getTotalNumberOfLikes(this.likes),
   );
 }
 
@@ -89,6 +96,8 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+
+    isLiked= (likes[currentOnlineUserId]== true);
     return Padding(padding: EdgeInsets.only(bottom:12.0),
       child: Column(
       mainAxisSize: MainAxisSize.min,
@@ -106,7 +115,7 @@ class _PostState extends State<Post> {
     builder: (context,dataSnapshot){
       if(!dataSnapshot.hasData)
       {
-        return circularProgress();
+        return linearProgress();
       }
       User user = User.fromDocument(dataSnapshot.data);
       bool isPostOwner = currentOnlineUserId == ownerId;
@@ -129,12 +138,77 @@ class _PostState extends State<Post> {
       );
     },);
   }
+  removeLike(){
+    bool isNotPostOwner = currentOnlineUserId != ownerId;
+    if(isNotPostOwner){
+       activityFeedReference.document(ownerId).collection("feedItems").document(postId).get().then((document){
+         if(document.exists){
+           document.reference.delete();
+
+       }});
+    }
+  }
+
+  addLike(){
+    bool isNotPostOwner = currentOnlineUserId != ownerId;
+
+    if(isNotPostOwner){
+      activityFeedReference.document(ownerId).collection("feedItems").document(postId).setData({
+        "type": "like",
+        "username": currentUser.username,
+        "userId": currentUser.id,
+        "timestamp": timestamp,
+        "url": url,
+        "post":postId,
+        "userProfileImage": currentUser.url    
+      });
+    }
+  }
+
+
+  controlUserLikePost(){
+    bool _liked = likes[currentOnlineUserId] ==true;
+    
+  
+
+    if(_liked){
+      postsReference.document(ownerId).collection("usersPosts").document(postId).updateData({"likes.$currentOnlineUserId": false});
+      removeLike();
+      setState(() {
+        likeCount = likeCount-1;
+        isLiked= false;
+        likes[currentOnlineUserId]= false;
+      });
+    }
+    else if(!_liked){
+      postsReference.document(ownerId).collection("usersPosts").document(postId).updateData({"likes.$currentOnlineUserId": true});
+      addLike();
+
+      setState(() {
+        likeCount=likeCount+1;
+        isLiked= true;
+        likes[currentOnlineUserId]= true;
+        showHeart = true;
+      });
+      Timer(Duration(milliseconds: 800),(){
+        setState(() {
+          showHeart = false;
+        });
+      });
+      
+    }
+  }
+
+
+
+
   createPostPicture(){
     return GestureDetector(
-      onDoubleTap: ()=> print("post Liked"),
+      onDoubleTap: ()=> controlUserLikePost(),
       child: Stack(alignment: Alignment.center,
       children: <Widget>[
-        Image.network(url)
+        Image.network(url),
+        showHeart ? Icon(Icons.favorite,size: 100.0,color: Colors.pink,) : Text(""),
       ],
       ),
     );
@@ -148,10 +222,10 @@ class _PostState extends State<Post> {
           children: <Widget>[
             Padding(padding: EdgeInsets.only(top:40.0,left:20.0)),
             GestureDetector(
-              onTap: ()=> print("liked post"),
-              child: Icon(Icons.favorite,color:Colors.grey//isLiked ? Icons.favorite : Icons.favorite_border,
-              // size: 28.0,
-              // color: Colors.pink,
+              onTap: ()=> controlUserLikePost(),
+              child: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
+              size: 28.0,
+              color: Colors.pink,
               ),
             ),
             Padding(padding: EdgeInsets.only(right: 20.0)),

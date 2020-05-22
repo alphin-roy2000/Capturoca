@@ -16,7 +16,7 @@ final GoogleSignIn gSignIn = GoogleSignIn();
 final usersReference = Firestore.instance.collection("users");
 final StorageReference storageReference= FirebaseStorage.instance.ref().child("Post Pictures");
 final postsReference = Firestore.instance.collection("posts");
-
+final activityFeedReference = Firestore.instance.collection("feed");
 final DateTime timestamp = DateTime.now();
 User currentUser;
 
@@ -205,12 +205,12 @@ class _HomePageState extends State<HomePage>
           onTap: onTabChangePage,
           backgroundColor: Colors.cyan,
           activeColor: Colors.white,
-          inactiveColor: Colors.red,
+          inactiveColor: Colors.indigoAccent,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home)),
             BottomNavigationBarItem(icon: Icon(Icons.search)),
             BottomNavigationBarItem(icon: Icon(Icons.photo_camera, size: 37.0,)),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite)),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite, color:Colors.red)),
             BottomNavigationBarItem(icon: Icon(Icons.person)),
           ],
         ),

@@ -13,8 +13,10 @@ import 'package:flutter/material.dart';
 import 'EditProfilePage.dart';
 
 class ProfilePage extends StatefulWidget {
+  
   final String userProfileId;
   ProfilePage({this.userProfileId});
+  
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -35,8 +37,10 @@ class _ProfilePageState extends State<ProfilePage> {
     getAllProfilePosts();
   }
   
+  
   createProfileTopView(){
     return FutureBuilder(
+      
       future: usersReference.document(widget.userProfileId).get(),
       builder: (context, dataSnapshot){
         if(!dataSnapshot.hasData)
@@ -165,6 +169,9 @@ class _ProfilePageState extends State<ProfilePage> {
         showDialog(context: context,builder:(context){Future.delayed(Duration(seconds: 2), () {
                           Navigator.of(context).pop(true);
                         });return AlertDialog(title:Text('Succesfully Saved'),);});
+                        setState(() {
+                          // this.l=true;
+                        });
         
     }
 
@@ -203,7 +210,7 @@ class _ProfilePageState extends State<ProfilePage> {
           
           ),
           Padding(padding: EdgeInsets.only(top: 20.0),
-            child: Text("No Post", style: TextStyle(color: Colors.redAccent, fontSize: 40.0, fontWeight: FontWeight.bold)),
+            child: Text("No Post", style: TextStyle(color: Colors.indigoAccent, fontSize: 40.0, fontWeight: FontWeight.bold)),
           ),
          ],
         
@@ -255,7 +262,7 @@ class _ProfilePageState extends State<ProfilePage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         
-        IconButton(icon: Icon(Icons.grid_on,color: postOrientation== "grid" ? Theme.of(context).primaryColor : Colors.grey,), onPressed:()=> setOrientaton("grid")),
+        IconButton(icon: Icon(Icons.grid_on,color: postOrientation== "grid" ? Theme.of(context).accentColor : Colors.grey,), onPressed:()=> setOrientaton("grid")),
         IconButton(icon: Icon(Icons.list,color: postOrientation== "list" ? Theme.of(context).primaryColor : Colors.grey,), onPressed:()=> setOrientaton("list")),
         
       
