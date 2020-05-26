@@ -17,6 +17,10 @@ final usersReference = Firestore.instance.collection("users");
 final StorageReference storageReference= FirebaseStorage.instance.ref().child("Post Pictures");
 final postsReference = Firestore.instance.collection("posts");
 final activityFeedReference = Firestore.instance.collection("feed");
+final commentsReference = Firestore.instance.collection("comments");
+final followersReference = Firestore.instance.collection("followers");
+final followingReference = Firestore.instance.collection("following");
+
 final DateTime timestamp = DateTime.now();
 User currentUser;
 
@@ -248,11 +252,20 @@ class _HomePageState extends State<HomePage>
                     fit: BoxFit.cover,
                   )
                 )
-              )
-            )
+              ),
+              
+            ),
+            Container(height:100),
+            Text(
+              "by  A.R",
+              textAlign: TextAlign.end,
+              style: TextStyle(fontSize: 20.0, color: Colors.blueAccent,fontFamily: "Signatra"),
+            ),
           ],
         ),
+        
       ),
+      
     );
   }
 

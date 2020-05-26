@@ -2,7 +2,7 @@
 
 import 'package:Capturoca/models/user.dart';
 import 'package:Capturoca/pages/HomePage.dart';
-import 'package:Capturoca/pages/ProfilePage.dart';
+
 import 'package:Capturoca/widgets/ProgressWidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -101,11 +101,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   
                 ),
                 ),
-                Padding(padding: EdgeInsets.only(top:10.0,left:50.0,right: 50.0),
+                Padding(padding: EdgeInsets.all(50),
                 child: RaisedButton(onPressed: logoutUser,
                 color: Colors.red,
-                  child: Text("Logout",
-                  style: TextStyle(color:  Colors.white, fontSize: 16.0))
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.chat_bubble_outline),
+                      Text("Logout",
+                      style: TextStyle(color:  Colors.white, fontSize: 16.0)),
+                    ],
+                  )
                   
                 ),)
               ],

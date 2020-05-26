@@ -6,6 +6,7 @@ import 'package:Capturoca/widgets/ProgressWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Capturoca/pages/HomePage.dart';
+import 'package:Capturoca/pages/CommentsPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 
@@ -230,7 +231,7 @@ class _PostState extends State<Post> {
             ),
             Padding(padding: EdgeInsets.only(right: 20.0)),
             GestureDetector(
-              onTap: ()=> print("show comments"),
+              onTap: ()=> displayComments(context,postId: postId,ownerId:ownerId,url:url),
               child: Icon(Icons.chat_bubble_outline,size: 28.0, color:Colors.black
               ),
             ),
@@ -255,4 +256,13 @@ class _PostState extends State<Post> {
       ],
     );
   }
+  displayComments(BuildContext context,{String postId, String ownerId,String url})
+  {
+    Navigator.push(context,MaterialPageRoute(builder: (context)
+    {
+      return CommentsPage(postId: postId, postOwnerId: ownerId, postImageUrl:url);
+    }));
+
+  } 
+
 }

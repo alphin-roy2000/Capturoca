@@ -26,15 +26,45 @@ class _ProfilePageState extends State<ProfilePage> {
   
 
   
-  final String currentOnlinUserId = currentUser.id;
+  final String currentOnlineUserId = currentUser.id;
   bool loading=false;
   int countPost = 0;
   List<Post> postsList = [];
   String postOrientation= "grid";
+  int countTotalFollowers = 0;
+  int countTotalFollowings = 0;
+  bool following= false;
 
-
+ 
   void initState(){
+    super.initState();
+    
     getAllProfilePosts();
+    getAllFollowers();
+    getAllFollowing();
+    checkIfAlreadyFollowing();
+  }
+  getAllFollowing()async {
+    QuerySnapshot querySnapshot = await followingReference.document(widget.userProfileId).collection("userFollowing").getDocuments();
+    setState(() {
+      countTotalFollowings = querySnapshot.documents.length;
+    });
+  }
+
+  
+  checkIfAlreadyFollowing() async{
+    DocumentSnapshot documentSnapshot= await followersReference.document(widget.userProfileId).collection("userFollowers").document(currentOnlineUserId).get();
+    setState(() {
+      following = documentSnapshot.exists;
+    });
+  }
+
+  getAllFollowers() async{
+    QuerySnapshot querySnapshot = await followersReference.document(widget.userProfileId).collection("userFollowers").getDocuments();
+    setState(() {
+      countTotalFollowers = querySnapshot.documents.length;
+    });
+    
   }
   
   
@@ -68,9 +98,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
-                            createColumns("Posts",0),
-                            createColumns("Followers",0),
-                            createColumns("Following",0),
+                            createColumns("Posts",countPost),
+                            createColumns("Followers",countTotalFollowers),
+                            createColumns("Following",countTotalFollowings),
                           ],
                         ),
                         Row(
@@ -134,12 +164,60 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   createButton(){
-    bool ownProfile = currentOnlinUserId == widget.userProfileId;
+    bool ownProfile = currentOnlineUserId == widget.userProfileId;
     if(ownProfile){
       return createButtonTitleAndFunction(title: "Edit Profile", performFunction: editUserProfile,);
     }
+    if(following){
+      return createButtonTitleAndFunction(title: "Unfollow", performFunction: controlUnfollowUser,);
+    }
+    else if(!following){
+      return createButtonTitleAndFunction(title: "Follow", performFunction: controlFollowUser,);
+    }
   }
-// createButtonTitleAndFunction(title: "Edit Profile", performFunction: editUserProfile,);
+
+  controlUnfollowUser(){
+    setState(() {
+      following= false;
+
+    });
+    followersReference.document(widget.userProfileId).collection("userFollowers").document(currentOnlineUserId).get().then((document){
+      if(document.exists){
+        document.reference.delete();
+      }
+    });
+    followingReference.document(currentOnlineUserId).collection("userFollowing").document(widget.userProfileId).get().then((document){
+      if(document.exists){
+        document.reference.delete();
+      }
+    });
+
+    activityFeedReference.document(widget.userProfileId).collection("feedItems").document(currentOnlineUserId).get().then((document){
+      if(document.exists){
+        document.reference.delete();
+      }
+    });
+  }
+
+  controlFollowUser(){
+    setState(() {
+      following =true;
+    });
+    followersReference.document(widget.userProfileId).collection("userFollowers").document(currentOnlineUserId).setData({});
+    followingReference.document(currentOnlineUserId).collection("userFollowing").document(widget.userProfileId).setData({});
+    
+    activityFeedReference.document(widget.userProfileId).collection("feedItems").document(currentOnlineUserId).setData({
+      "type": "follow",
+      "ownerId": widget.userProfileId,
+      "username":currentUser.username,
+      "timestamp": DateTime.now(),
+      "userProfileImg": currentUser.url,
+      "userId": currentOnlineUserId
+
+    });
+  
+  }
+// createButtonTitleAndFunction(title: "Edit Profile", performFunction: editUserProfile,);  
   createButtonTitleAndFunction({String title, Function performFunction}){
     return Container(
       
@@ -149,10 +227,10 @@ class _ProfilePageState extends State<ProfilePage> {
           
           width: 200.0,
           height: 26.0,
-          child: Text(title, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+          child: Text(title, style: TextStyle(color: following ?   Colors.grey: Colors.red, fontWeight: FontWeight.bold),
           ),
           alignment: Alignment.center,
-          decoration: BoxDecoration(color:Colors.black,border:Border.all(color:Colors.grey),
+          decoration: BoxDecoration(color:following ? Colors.black: Colors.indigo,border:Border.all(color:following ? Colors.grey: Colors.white70),
           borderRadius: BorderRadius.circular(6.0),
           ),
         ),
@@ -161,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   editUserProfile() async{
-    var navigationResult =  await Navigator.push(context,new  MaterialPageRoute(builder: (context)=> EditProfilePage(currentOnlineUserId: currentOnlinUserId)));
+    var navigationResult =  await Navigator.push(context,new  MaterialPageRoute(builder: (context)=> EditProfilePage(currentOnlineUserId: currentOnlineUserId)));
     // Navigator.push(context, MaterialPageRoute(builder: (context)=> new EditProfilePage(currentOnlineUserId: currentOnlinUserId)));
     // Navigator.of(context).push(new MaterialPageRoute(builder: (_)=>new EditProfilePage(currentOnlineUserId: currentOnlinUserId)),);
     if(navigationResult)
@@ -173,6 +251,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           // this.l=true;
                         });
         
+    }
+    else if(navigationResult==null){
+      showDialog(context: context,builder:(context){Future.delayed(Duration(seconds: 2), () {
+                          Navigator.of(context).pop(true);
+                        });return AlertDialog(title:Text('Welcome Back'),);});
     }
 
   }

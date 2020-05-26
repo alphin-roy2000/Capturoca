@@ -18,6 +18,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
 class NotificationsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    
+    return Text("gjghfjgf");
   }
 }

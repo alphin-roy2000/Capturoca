@@ -118,7 +118,7 @@ class _UploadPageState extends State<UploadPage>with AutomaticKeepAliveClientMix
     Position position= await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placeMarks = await Geolocator().placemarkFromCoordinates(position.latitude,position.longitude);
     Placemark mPlaceMark = placeMarks[0];
-    String completeAddressInfo = '${mPlaceMark.subThoroughfare} ${mPlaceMark.thoroughfare}, ${mPlaceMark.subLocality} ${mPlaceMark.locality},${mPlaceMark.subAdministrativeArea} ${mPlaceMark.administrativeArea}, ${mPlaceMark.postalCode} ${mPlaceMark.country} ';
+    //String completeAddressInfo = '${mPlaceMark.subThoroughfare} ${mPlaceMark.thoroughfare}, ${mPlaceMark.subLocality} ${mPlaceMark.locality},${mPlaceMark.subAdministrativeArea} ${mPlaceMark.administrativeArea}, ${mPlaceMark.postalCode} ${mPlaceMark.country} ';
     String specificAddress = '${mPlaceMark.locality},${mPlaceMark.country}';
     locationTextEditingController.text = specificAddress;//location permisiion not asking
   

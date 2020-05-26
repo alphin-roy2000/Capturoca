@@ -6,12 +6,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'ProfilePage.dart';
+
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMixin<SearchPage> {
+class _SearchPageState extends State<SearchPage>  {
   TextEditingController searchTextEditingController = TextEditingController();
   Future<QuerySnapshot> futureSearchResults;
 
@@ -52,7 +54,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   }
 
   Container displayNoSearchResultScreen(){
-    final Orientation orientation =MediaQuery.of(context).orientation;
+    //final Orientation orientation =MediaQuery.of(context).orientation;
     return Container(
       child: Center(
         child: ListView(
@@ -91,10 +93,12 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
     );
   }
 
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 
   @override
+  
   Widget build(BuildContext context) {
+    
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: searchPageHeader(),
@@ -118,7 +122,7 @@ class UserResult extends StatelessWidget {
         child: Column(
           children: <Widget>[
             GestureDetector(
-              onTap: ()=> print("tapped"),
+              onTap: ()=> displayUserProfile(context, userProfileId:eachUser.id),
               child: ListTile(
                 leading: CircleAvatar(backgroundColor: Colors.black, backgroundImage: CachedNetworkImageProvider(eachUser.url),),
                 title: Text(eachUser.profileName, style: TextStyle(
@@ -135,5 +139,11 @@ class UserResult extends StatelessWidget {
         ),
       ),
     );
+
+  }
+
+  displayUserProfile(BuildContext context,{String userProfileId}){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage(userProfileId: userProfileId)));
+
   }
 }
